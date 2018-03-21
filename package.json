@@ -1,0 +1,27 @@
+{
+  "name": "ap-panther",
+  "version": "0.0.1",
+  "description": "Panther Result Interface Module",
+  "main": "src/index.js",
+  "scripts": {
+    "start-service": "node src/start-service.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openaplis/ap-panther.git"
+  },
+  "author": "Sid Harder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/openaplis/ap-panther/issues"
+  },
+  "homepage": "https://github.com/openaplis/ap-panther#readme",
+  "dependencies": {
+    "ap-gateway": "*",
+    "ap-mysql": "*",
+    "ap-protobuf": "*",
+    "chai": "^4.0.2",
+    "dateformat": "^3.0.2",
+    "underscore": "^1.8.3"
+  }
+}

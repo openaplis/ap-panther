@@ -13,23 +13,22 @@ var inputParams = {
   specimenIsUnsat: true
 }
 
-describe('HPV Tests', function () {
+describe('TRICH Tests', function () {
   it('Negative Test', function (done) {
     var updates = trichResultHandler.handleResult(pantherResultTrich.negative, inputParams)
-    var result = resultHelper.getField(updates, 'tblTrichTestOrder', 'Result')
+    var result = resultHelper.getField(updates, 'tblTrichomonasTestOrder', 'Result')
     var resultCode = resultHelper.getField(updates, 'tblPanelSetOrder', 'ResultCode')
-    var comment = resultHelper.getField(updates, 'tblTrichTestOrder', 'Comment')
 
     assert.equal(trichResult.negative.result, result.value)
     assert.equal(trichResult.negative.resultCode, resultCode.value)
-    assert.equal(trichResult.unsatSpecimenComment, comment.value)
 
+    console.log(updates[1].fields)
     done()
   })
 
   it('Positive Test', function (done) {
     var updates = trichResultHandler.handleResult(pantherResultTrich.positive, inputParams)
-    var result = resultHelper.getField(updates, 'tblTrichTestOrder', 'Result')
+    var result = resultHelper.getField(updates, 'tblTrichomonasTestOrder', 'Result')
     var resultCode = resultHelper.getField(updates, 'tblPanelSetOrder', 'ResultCode')
 
     assert.equal(trichResult.positive.result, result.value)
@@ -39,7 +38,7 @@ describe('HPV Tests', function () {
 
   it('Invalid Test', function (done) {
     var updates = trichResultHandler.handleResult(pantherResultTrich.invalid, inputParams)
-    var result = resultHelper.getField(updates, 'tblTrichTestOrder', 'Result')
+    var result = resultHelper.getField(updates, 'tblTrichomonasTestOrder', 'Result')
     var resultCode = resultHelper.getField(updates, 'tblPanelSetOrder', 'ResultCode')
 
     assert.equal(trichResult.invalid.result, result.value)

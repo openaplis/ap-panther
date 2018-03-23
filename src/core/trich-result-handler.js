@@ -11,7 +11,7 @@ module.exports = {
       var trichResultUpdate = resultHelper.getBaseResultUpdate('tblTrichomonasTestOrder', 'ReportNo', inputParams.reportNo)
       var psoResultUpdate = resultHelper.getBaseResultUpdate('tblPanelSetOrder', 'ReportNo', inputParams.reportNo)
 
-      if(pantherResult.OverallInterpretation == trichResult.negative.result) {
+      if(pantherResult["TRICH Result"] == trichResult.negative.pantherResult) {
         resultHelper.addField(trichResultUpdate, 'Result', trichResult.negative.result)
         resultHelper.addField(psoResultUpdate, 'ResultCode', trichResult.negative.resultCode)
 
@@ -19,13 +19,13 @@ module.exports = {
         resultHelper.autoFinal(psoResultUpdate)
         result.push(trichResultUpdate)
         result.push(psoResultUpdate)
-      } else if (pantherResult.OverallInterpretation == trichResult.positive.result) {
+      } else if (pantherResult["TRICH Result"] == trichResult.positive.pantherResult) {
         resultHelper.addField(trichResultUpdate, 'Result', trichResult.positive.result)
         resultHelper.addField(psoResultUpdate, 'ResultCode', trichResult.positive.resultCode)
         resultHelper.autoAccept(psoResultUpdate)
         result.push(trichResultUpdate)
         result.push(psoResultUpdate)
-      } else if (pantherResult.OverallInterpretation == trichResult.invalid.result) {
+      } else if (pantherResult["TRICH Result"] == trichResult.invalid.pantherResult) {
         resultHelper.addField(trichResultUpdate, 'Result', trichResult.invalid.result)
         resultHelper.addField(psoResultUpdate, 'ResultCode', trichResult.invalid.resultCode)
         result.push(trichResultUpdate)

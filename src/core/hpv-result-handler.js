@@ -4,7 +4,13 @@ var hpvResult = require('./hpv-result')
 
 module.exports = {
   testName: 'HPV',
-  handleResult: function (pantherResult, inputParams) {
+  handleResult: function (pantherResult) {
+    //compose things here
+  },
+  getInputParameters: function (pantherResult) {
+    //Go get the data necessary from mysql server, only bring what is necessary
+  },
+  buildUpdateObject: function (pantherResult, inputParams) {
     var result = []
 
     if(inputParams.accepted == false) {
@@ -41,5 +47,8 @@ module.exports = {
       }
     }
     return result
+  },
+  updateDatabase: function (updateObject) {
+    //convert update object to sql and send off to the sql server.
   }
 }

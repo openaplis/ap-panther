@@ -30,5 +30,35 @@ module.exports = {
     "TotalRLU":"0",
     "CTResult":"Invalid",
     "GCResult":"Invalid"
+  },
+  madeupPositiveNegative: {
+    "PatientId":"MOUSE",
+    "LastName":"MICKEY",
+    "FirstName":"",
+    "AliquotOrderId":"CT-GC+ EQC",
+    "TestName":"CT/GC",
+    "TotalRLU":"1101",
+    "CTResult":"CT POS",
+    "GCResult":"GC neg"
+  },
+  madeupPositivePositive: {
+    "PatientId":"MOUSE",
+    "LastName":"MICKEY",
+    "FirstName":"",
+    "AliquotOrderId":"CT-GC+ EQC",
+    "TestName":"CT/GC",
+    "TotalRLU":"1101",
+    "CTResult":"CT POS",
+    "GCResult":"GC POS"
+  },
+  madeupNegativeInvalid: {
+    "PatientId":"MOUSE",
+    "LastName":"MICKEY",
+    "FirstName":"",
+    "AliquotOrderId":"CT-GC+ EQC",
+    "TestName":"CT/GC",
+    "TotalRLU":"1101",
+    "CTResult":"Invalid",
+    "GCResult":"GC neg"
   }
 }

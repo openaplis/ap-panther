@@ -1,14 +1,17 @@
 module.exports = {
   positive: {
     resultCode: 'TRCHMNSPOS',
-    result: 'Positive'
+    result: 'Positive',
+    pantherResult: 'TRICH POS'
   },
   negative: {
     resultCode: 'TRCHMNSNEG',
-    result: 'Negative'
+    result: 'Negative',
+    pantherResult: 'TRICH neg'
   },
   invalid: {
     resultCode: 'TRCHMNSNVLD',
-    result: 'Invalid'
-  },
+    result: 'Invalid',
+    pantherResult: 'Invalid'
+  }
 }

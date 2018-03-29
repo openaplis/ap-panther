@@ -8,9 +8,7 @@ const trichResult = require('../src/core/trich-result')
 
 var inputParams = {
   reportNo: '18-99999',
-  accepted: false,
-  papIsFinal: true,
-  specimenIsUnsat: true
+  accepted: false
 }
 
 describe('TRICH Tests', function () {

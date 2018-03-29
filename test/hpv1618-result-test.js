@@ -8,9 +8,7 @@ const hpv1618Result = require('../src/core/hpv1618-result')
 
 var inputParams = {
   reportNo: '18-99999',
-  accepted: false,
-  papIsFinal: true,
-  specimenIsUnsat: true
+  accepted: false
 }
 
 describe('HPV1618 Tests', function () {

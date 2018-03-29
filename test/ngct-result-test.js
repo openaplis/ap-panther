@@ -8,9 +8,7 @@ const ngctResult = require('../src/core/ngct-result')
 
 var inputParams = {
   reportNo: '18-99999',
-  accepted: false,
-  papIsFinal: true,
-  specimenIsUnsat: true
+  accepted: false
 }
 
 describe('NGCT Tests', function () {

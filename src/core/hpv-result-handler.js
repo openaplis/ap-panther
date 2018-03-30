@@ -3,11 +3,21 @@ var resultHelper = require('./result-helper')
 var hpvResult = require('./hpv-result')
 const async = require('async')
 var cmdSubmitter = require('ap-mysql').cmdSubmitter
-var sqlHelper = require('ap-mysql').sqlHelper
 
 var self = module.exports = {
   testName: 'HPV',
   panelSetId: 14,
+  getInputParameters: function (resultData, callback) {
+    var inputParameters = {}
+    var stmt = ['select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = ', self.panelSetId,
+      ' and OrderedOnId = \'', resultData.AliquotOrderId, '\';'].join('')
+      cmdSubmitter.submit(stmt, function(err, results) {
+      if(err) return callback(err + '\n' + stmt)
+      inputParameters.reportNo = results[0].reportNo
+      inputParameters.accepted = results[0].accepted
+      callback(null, inputParameters)
+    })
+  },
   buildUpdateObject: function (pantherResult, inputParams, callback) {
     var result = []
 

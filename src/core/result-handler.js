@@ -14,13 +14,11 @@ var trichResultHandler = require(path.join(__dirname, 'trich-result-handler'))
 
 var self = module.exports = {
   handleResult: function (resultData, callback) {
-
     async.waterfall([
       async.apply(getHandler, resultData),
       getInputParameters,
       buildUpdateObject,
-      getUpdateStatements //,
-      //updateDatabase
+      updateDatabase
     ],function (err, result) {
       if(err) return callback(err)
       callback(null, 'all done')
@@ -37,16 +35,9 @@ function getHandler (resultData, callback) {
 }
 
 function getInputParameters (resultData, handler, callback) {
-  var inputParameters = {}
-  var stmt = ['select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = ', handler.panelSetId,
-    ' and OrderedOnId = \'', resultData.AliquotOrderId, '\';'].join('')
-    cmdSubmitter.submit(stmt, function(err, results) {
-    if(err) return callback(err + '\n' + stmt)
-    if(results.length == 0) return callback('PanelSet not found.')
-    if(results.length > 1) return callback('Too many PanelSets found.')
-    if(results.accepted == 1) return callback('PanelSet already accepted - ' + results[0].reportNo)
-    inputParameters.reportNo = results[0].reportNo
-    inputParameters.accepted = results[0].accepted
+  handler.getInputParameters(resultData, function(err, inputParameters) {
+    if(err) return callback(err)
+    console.log(inputParameters)
     callback(null, resultData, handler, inputParameters)
   })
 }
@@ -58,24 +49,10 @@ function buildUpdateObject (resultData, handler, inputParameters, callback) {
   })
 }
 
-function getUpdateStatements(updateObject, callback) {
-  var sql = ''
-  async.each(updateObject, function(tableObject, callback) {
-    sqlHelper.createUpdateStatement(tableObject, function(err, statement) {
-      if(err) return callback(err)
-      sql += statement
-      callback()
-    })
-  }, function(err) {
-    if(err) return callback(err)
-    callback(null, sql)
-  })
-
-}
-
-function updateDatabase(updateStatements, callback) {
-  sqlHelper.cmdSubmitter.submit(updateStatements, function(err, results) {
-    if(err) return callback(err + '\n' + updateStatements)
+function updateDatabase(updateObject, callback) {
+  var sql = sqlHelper.createUpdateStatement(updateObject)
+  //cmdSubmitter.submit(sql, function(err, results) {
+    //if(err) return callback(err + '\n' + sql)
     callback()
-  })
+  //})
 }

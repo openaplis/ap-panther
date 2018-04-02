@@ -46,7 +46,7 @@ var self = module.exports = {
           result.push(hpvResultUpdate)
           result.push(psoResultUpdate)
         } else {
-          return callback('Optimus prime does not handle this type of result. - ' + inputParams.reportNo)
+          return callback('Optimus prime does not handle this type of result. - ' + inputParameters.reportNo)
         }
       }
       callback(null, result)

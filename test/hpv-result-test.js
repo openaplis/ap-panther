@@ -6,11 +6,6 @@ const pantherResultHPV = require(path.join(__dirname, 'panther-result-hpv'))
 const hpvResultHandler = require('../src/core/hpv-result-handler')
 const hpvResult = require('../src/core/hpv-result')
 
-var inputParams = {
-  reportNo: '18-99999',
-  accepted: false
-}
-
 describe('HPV Tests', function () {
   it('GetInputParameters Test', function(done) {
     hpvResultHandler.getInputParameters(pantherResultHPV.negative, function(err, inputParameters) {
@@ -23,9 +18,7 @@ describe('HPV Tests', function () {
 
   it('Negative Test', function (done) {
     hpvResultHandler.buildUpdateObject(pantherResultHPV.negative, function(err, updates) {
-      if(err) {
-        console.log('Error - ' + err)
-        assert.equal(err, '')
+      if(err) { assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblHPVTestOrder', 'Result')
         var resultCode = resultHelper.getField(updates, 'tblPanelSetOrder', 'ResultCode')

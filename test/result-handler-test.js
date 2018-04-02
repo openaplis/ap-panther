@@ -22,7 +22,6 @@ describe('Result Handler Tests', function () {
     }
     resultHandler.handleResult(hpvNegResults, function(err, result) {
       if(err) {
-        console.log('Error - ' + err)
         assert.equal(err, '')
       } else {
         assert.equal(result, 'all done')
@@ -51,7 +50,47 @@ describe('Result Handler Tests', function () {
     }
     resultHandler.handleResult(gthpvNegResults, function(err, result) {
       if(err) {
-        console.log('Error - ' + err)
+        assert.equal(err, '')
+      } else {
+        assert.equal(result, 'all done')
+      }
+      done()
+    })
+  })
+
+  it('NGCT test', function(done) {
+    var ngctNegResults = {
+        "PatientId":"",
+        "LastName":"MOUSE",
+        "FirstName":"MICKEY",
+        "AliquotOrderId":"18-7689.1.2",
+        "TestName":"CT/GC",
+        "TotalRLU":"9",
+        "CTResult":"CT neg",
+        "GCResult":"GC neg"
+    }
+    resultHandler.handleResult(ngctNegResults, function(err, result) {
+      if(err) {
+        assert.equal(err, '')
+      } else {
+        assert.equal(result, 'all done')
+      }
+      done()
+    })
+  })
+
+  it("Trich Test", function(done) {
+    var trichNegResults = {
+      "PatientId":"",
+      "LastName":"MOUSE",
+      "FirstName":"MICKEY",
+      "AliquotOrderId":"18-7689.1.2",
+      "TestName":"TRICH",
+      "Total RLU":"2",
+      "TRICH Result":"TRICH neg"
+    }
+    resultHandler.handleResult(trichNegResults, function(err, result) {
+      if(err) {
         assert.equal(err, '')
       } else {
         assert.equal(result, 'all done')

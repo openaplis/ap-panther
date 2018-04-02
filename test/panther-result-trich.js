@@ -5,7 +5,7 @@ module.exports = {
     "PatientId":"",
     "LastName":"MOUSE",
     "FirstName":"MICKEY",
-    "AliquotOrderId":"17-9999.1.1",
+    "AliquotOrderId":"18-7689.1.2",
     "TestName":"TRICH",
     "Total RLU":"2",
     "TRICH Result":"TRICH neg"
@@ -14,7 +14,7 @@ module.exports = {
     "PatientId":"341384",
     "LastName":"MOUSE",
     "FirstName":"MICKEY",
-    "AliquotOrderId":"17-9999.1.1",
+    "AliquotOrderId":"18-7689.1.2",
     "TestName":"TRICH",
     "Total RLU":"1249",
     "TRICH Result":"TRICH POS"
@@ -23,7 +23,7 @@ module.exports = {
     "PatientId":"",
     "LastName":"MOUSE",
     "FirstName":"MICKEY",
-    "AliquotOrderId":"17-9999.1.1",
+    "AliquotOrderId":"18-7689.1.2",
     "TestName":"TRICH",
     "Total RLU":"0",
     "TRICH Result":"Invalid"

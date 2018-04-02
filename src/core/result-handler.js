@@ -41,6 +41,7 @@ function buildUpdateObject (resultData, handler, callback) {
 }
 
 function updateDatabase(updateObject, callback) {
+  if(updateObject.length == 0) { return callback() }
   var sql = sqlHelper.createUpdateStatement(updateObject)
   //cmdSubmitter.submit(sql, function(err, results) {
     //if(err) return callback(err + '\n' + sql)

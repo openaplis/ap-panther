@@ -12,8 +12,17 @@ var inputParams = {
 }
 
 describe('HPV Tests', function () {
+  it('GetInputParameters Test', function(done) {
+    hpvResultHandler.getInputParameters(pantherResultHPV.negative, function(err, inputParameters) {
+      if(err) assert.equal(err, '')
+      assert.equal(inputParameters.reportNo, '18-7689.M1')
+      assert.equal(inputParameters.accepted, 0)
+      done()
+    })
+  })
+
   it('Negative Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.negative, inputParams, function(err, updates) {
+    hpvResultHandler.buildUpdateObject(pantherResultHPV.negative, function(err, updates) {
       if(err) {
         console.log('Error - ' + err)
         assert.equal(err, '')
@@ -29,7 +38,7 @@ describe('HPV Tests', function () {
   })
 
   it('Positive Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.positive, inputParams, function(err, updates) {
+    hpvResultHandler.buildUpdateObject(pantherResultHPV.positive, function(err, updates) {
       if(err) {
         console.log('Error - ' + err)
         assert.equal(err, '')
@@ -45,7 +54,7 @@ describe('HPV Tests', function () {
   })
 
   it('Invalid Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.invalid, inputParams, function(err, updates) {
+    hpvResultHandler.buildUpdateObject(pantherResultHPV.invalid, function(err, updates) {
       if(err) {
         console.log('Error - ' + err)
         assert.equal(err, '')

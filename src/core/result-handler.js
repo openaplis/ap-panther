@@ -9,14 +9,13 @@ var sqlHelper = require('ap-mysql').sqlHelper
 
 var hpvResultHandler = require(path.join(__dirname, 'hpv-result-handler'))
 var ngctResultHandler = require(path.join(__dirname, 'ngct-result-handler'))
-var gthpvResultHandler = require(path.join(__dirname, 'hpv1618-result-handler'))
+var gthpvResultHandler = require(path.join(__dirname, 'gthpv-result-handler'))
 var trichResultHandler = require(path.join(__dirname, 'trich-result-handler'))
 
 var self = module.exports = {
   handleResult: function (resultData, callback) {
     async.waterfall([
       async.apply(getHandler, resultData),
-      getInputParameters,
       buildUpdateObject,
       updateDatabase
     ],function (err, result) {
@@ -34,16 +33,8 @@ function getHandler (resultData, callback) {
   callback(null, resultData, handler)
 }
 
-function getInputParameters (resultData, handler, callback) {
-  handler.getInputParameters(resultData, function(err, inputParameters) {
-    if(err) return callback(err)
-    console.log(inputParameters)
-    callback(null, resultData, handler, inputParameters)
-  })
-}
-
-function buildUpdateObject (resultData, handler, inputParameters, callback) {
-  handler.buildUpdateObject(resultData, inputParameters, function(err, updateObject) {
+function buildUpdateObject (resultData, handler, callback) {
+  handler.buildUpdateObject(resultData, function(err, updateObject) {
     if(err) return callback(err)
     callback(null, updateObject)
   })

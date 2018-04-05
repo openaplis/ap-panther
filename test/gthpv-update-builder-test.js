@@ -3,12 +3,12 @@ const path = require('path')
 
 const resultHelper = require('../src/core/result-helper')
 const pantherResultGTHPV = require(path.join(__dirname, 'panther-result-gthpv'))
-const gthpvResultHandler = require('../src/core/gthpv-result-handler')
+const gthpvUpdateBuilder = require('../src/core/gthpv-update-builder')
 const gthpvResult = require('../src/core/gthpv-result')
 
 describe('HPV1618 Tests', function () {
   it('Both Negative Test', function (done) {
-    gthpvResultHandler.buildUpdateObject(pantherResultGTHPV.resultOne, function(err, updates) {
+    gthpvUpdateBuilder.buildUpdateObject(pantherResultGTHPV.resultOne, function(err, updates) {
       if(err) assert.equal(err, '')
       var hpv16result = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV16Result')
       var hpv16resultCode = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV16ResultCode')
@@ -24,7 +24,7 @@ describe('HPV1618 Tests', function () {
   })
 
   it('16Positive 18Negative Test', function (done) {
-    gthpvResultHandler.buildUpdateObject(pantherResultGTHPV.resultTwo, function(err, updates) {
+    gthpvUpdateBuilder.buildUpdateObject(pantherResultGTHPV.resultTwo, function(err, updates) {
       if(err) assert.equal(err, '')
       var hpv16result = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV16Result')
       var hpv16resultCode = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV16ResultCode')
@@ -40,7 +40,7 @@ describe('HPV1618 Tests', function () {
   })
 
   it('Invalid Test', function (done) {
-    gthpvResultHandler.buildUpdateObject(pantherResultGTHPV.invalid, function(err, updates) {
+    gthpvUpdateBuilder.buildUpdateObject(pantherResultGTHPV.invalid, function(err, updates) {
       if(err) assert.equal(err, '')
       var hpv16result = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV16Result')
       var hpv16resultCode = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV16ResultCode')

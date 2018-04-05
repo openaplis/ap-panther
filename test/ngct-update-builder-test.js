@@ -3,12 +3,12 @@ const path = require('path')
 
 const resultHelper = require('../src/core/result-helper')
 const pantherResultNGCT = require(path.join(__dirname, 'panther-result-ngct'))
-const ngctResultHandler = require('../src/core/ngct-result-handler')
+const ngctUpdateBuilder = require('../src/core/ngct-update-builder')
 const ngctResult = require('../src/core/ngct-result')
 
 describe('NGCT Tests', function () {
   it('Both Negative Test', function (done) {
-    ngctResultHandler.buildUpdateObject(pantherResultNGCT.bothNegative, function(err, updates) {
+    ngctUpdateBuilder.buildUpdateObject(pantherResultNGCT.bothNegative, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var ngresult = resultHelper.getField(updates, 'tblNGCTTestOrder', 'NeisseriaGonorrhoeaeResult')
@@ -26,7 +26,7 @@ describe('NGCT Tests', function () {
   })
 
   it('NGPositive CTNegative Test', function (done) {
-    ngctResultHandler.buildUpdateObject(pantherResultNGCT.negativePositive, function(err, updates) {
+    ngctUpdateBuilder.buildUpdateObject(pantherResultNGCT.negativePositive, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var ngresult = resultHelper.getField(updates, 'tblNGCTTestOrder', 'NeisseriaGonorrhoeaeResult')
@@ -44,7 +44,7 @@ describe('NGCT Tests', function () {
   })
 
   it('Invalid Test', function (done) {
-    ngctResultHandler.buildUpdateObject(pantherResultNGCT.invalid, function(err, updates) {
+    ngctUpdateBuilder.buildUpdateObject(pantherResultNGCT.invalid, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var ngresult = resultHelper.getField(updates, 'tblNGCTTestOrder', 'NeisseriaGonorrhoeaeResult')
@@ -62,7 +62,7 @@ describe('NGCT Tests', function () {
   })
 
   it('Madeup Neg Pos Test', function (done) {
-    ngctResultHandler.buildUpdateObject(pantherResultNGCT.madeupPositiveNegative, function(err, updates) {
+    ngctUpdateBuilder.buildUpdateObject(pantherResultNGCT.madeupPositiveNegative, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var ngresult = resultHelper.getField(updates, 'tblNGCTTestOrder', 'NeisseriaGonorrhoeaeResult')
@@ -80,7 +80,7 @@ describe('NGCT Tests', function () {
   })
 
   it('Madeup Both Pos', function (done) {
-    ngctResultHandler.buildUpdateObject(pantherResultNGCT.madeupPositivePositive, function(err, updates) {
+    ngctUpdateBuilder.buildUpdateObject(pantherResultNGCT.madeupPositivePositive, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var ngresult = resultHelper.getField(updates, 'tblNGCTTestOrder', 'NeisseriaGonorrhoeaeResult')
@@ -98,7 +98,7 @@ describe('NGCT Tests', function () {
   })
 
   it('MadeUp Neg Invalid Test', function (done) {
-    ngctResultHandler.buildUpdateObject(pantherResultNGCT.madeupNegativeInvalid, function(err, updates) {
+    ngctUpdateBuilder.buildUpdateObject(pantherResultNGCT.madeupNegativeInvalid, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var ngresult = resultHelper.getField(updates, 'tblNGCTTestOrder', 'NeisseriaGonorrhoeaeResult')

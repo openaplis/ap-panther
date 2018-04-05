@@ -3,12 +3,12 @@ const path = require('path')
 
 const resultHelper = require('../src/core/result-helper')
 const pantherResultHPV = require(path.join(__dirname, 'panther-result-hpv'))
-const hpvResultHandler = require('../src/core/hpv-result-handler')
+const hpvUpdateBuilder = require('../src/core/hpv-update-builder')
 const hpvResult = require('../src/core/hpv-result')
 
 describe('HPV Tests', function () {
   it('GetInputParameters Test', function(done) {
-    hpvResultHandler.getInputParameters(pantherResultHPV.negative, function(err, inputParameters) {
+    hpvUpdateBuilder.getInputParameters(pantherResultHPV.negative, function(err, inputParameters) {
       if(err) assert.equal(err, '')
       assert.equal(inputParameters.reportNo, '18-7689.M1')
       assert.equal(inputParameters.accepted, 0)
@@ -17,7 +17,7 @@ describe('HPV Tests', function () {
   })
 
   it('Negative Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.negative, function(err, updates) {
+    hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.negative, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblHPVTestOrder', 'Result')
@@ -31,7 +31,7 @@ describe('HPV Tests', function () {
   })
 
   it('Positive Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.positive, function(err, updates) {
+    hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.positive, function(err, updates) {
       if(err) {
         console.log('Error - ' + err)
         assert.equal(err, '')
@@ -47,7 +47,7 @@ describe('HPV Tests', function () {
   })
 
   it('Invalid Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.invalid, function(err, updates) {
+    hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.invalid, function(err, updates) {
       if(err) {
         console.log('Error - ' + err)
         assert.equal(err, '')

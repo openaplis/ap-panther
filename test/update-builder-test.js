@@ -1,7 +1,7 @@
 const assert = require('chai').assert
 const path = require('path')
 
-const resultHandler = require('../src/core/result-handler')
+const updateBuilder = require('../src/core/update-builder')
 
 
 describe('Result Handler Tests', function () {
@@ -20,7 +20,7 @@ describe('Result Handler Tests', function () {
       "Analyte Cutoff":"",
       "IC Cutoff":""
     }
-    resultHandler.handleResult(hpvNegResults, function(err, result) {
+    updateBuilder.handleResult(hpvNegResults, function(err, result) {
       if(err) {
         assert.equal(err, '')
       } else {
@@ -48,7 +48,7 @@ describe('Result Handler Tests', function () {
       "HPV 18/45 Cutoff":"",
       "IC Cutoff":""
     }
-    resultHandler.handleResult(gthpvNegResults, function(err, result) {
+    updateBuilder.handleResult(gthpvNegResults, function(err, result) {
       if(err) {
         assert.equal(err, '')
       } else {
@@ -69,7 +69,7 @@ describe('Result Handler Tests', function () {
         "CTResult":"CT neg",
         "GCResult":"GC neg"
     }
-    resultHandler.handleResult(ngctNegResults, function(err, result) {
+    updateBuilder.handleResult(ngctNegResults, function(err, result) {
       if(err) {
         assert.equal(err, '')
       } else {
@@ -89,7 +89,7 @@ describe('Result Handler Tests', function () {
       "Total RLU":"2",
       "TRICH Result":"TRICH neg"
     }
-    resultHandler.handleResult(trichNegResults, function(err, result) {
+    updateBuilder.handleResult(trichNegResults, function(err, result) {
       if(err) {
         assert.equal(err, '')
       } else {

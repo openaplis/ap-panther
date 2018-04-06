@@ -6,9 +6,20 @@ const pantherResultTrich = require(path.join(__dirname, 'panther-result-trich'))
 const trichUpdateBuilder = require('../src/core/trich-update-builder')
 const trichResult = require('../src/core/trich-result')
 
+var inputParams = {
+  "reportNo": "17-999999",
+  "accepted": false
+}
+
 describe('TRICH Tests', function () {
+  it('GetInputParametersStatement Test', function(done) {
+    var stmt = trichUpdateBuilder.getInputParametersStatement(pantherResultTrich.negative)
+      assert.equal(stmt, 'select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = 61 and OrderedOnId = \'17-999999.1.1\';')
+      done()
+  })
+
   it('Negative Test', function (done) {
-    trichUpdateBuilder.buildUpdateObject(pantherResultTrich.negative, function(err, updates) {
+    trichUpdateBuilder.buildUpdateObject(pantherResultTrich.negative, inputParams, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblTrichomonasTestOrder', 'Result')
@@ -22,7 +33,7 @@ describe('TRICH Tests', function () {
   })
 
   it('Positive Test', function (done) {
-    trichUpdateBuilder.buildUpdateObject(pantherResultTrich.positive, function(err, updates) {
+    trichUpdateBuilder.buildUpdateObject(pantherResultTrich.positive, inputParams, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblTrichomonasTestOrder', 'Result')
@@ -36,7 +47,7 @@ describe('TRICH Tests', function () {
   })
 
   it('Invalid Test', function (done) {
-    trichUpdateBuilder.buildUpdateObject(pantherResultTrich.invalid, function(err, updates) {
+    trichUpdateBuilder.buildUpdateObject(pantherResultTrich.invalid, inputParams, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblTrichomonasTestOrder', 'Result')
@@ -44,6 +55,21 @@ describe('TRICH Tests', function () {
 
         assert.equal(trichResult.invalid.result, result.value)
         assert.equal(trichResult.invalid.resultCode, resultCode.value)
+      }
+      done()
+    })
+  })
+
+  it('Already Accepted Test', function (done) {
+    var inputParamsAccepted = {
+      "reportNo": "17-999999",
+      "accepted": true
+    }
+
+    trichUpdateBuilder.buildUpdateObject(pantherResultTrich.negative, inputParamsAccepted, function(err, updates) {
+      if(err) { assert.equal(err, '')
+      } else {
+        assert.equal(updates.length, 0)
       }
       done()
     })

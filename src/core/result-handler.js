@@ -32,12 +32,7 @@ var self = module.exports = {
   },
 
   getInputParameters: function (resultData, updateBuilder, callback) {
-    var inputParametersStatement = ['select pso.ReportNo, pso.Accepted, p.HoldForWHP, p.DistributeWHPOnly ',
-      'from tblPanelSetOrder pso join tblAccessionOrder ao on pso.MasterAccessionNo = ao.MasterAccessionNo ',
-      'join tblPhysician p on ao.PhysicianId = p.PhysicianId where PanelSetId = ', updateBuilder.panelSetId,
-      ' and OrderedOnId = \'', resultData.AliquotOrderId, '\'; select ReportNo, Final from tblPanelSetOrder ',
-      'where PanelSetId = 116 and MasterAccessionNo = (select MasterAccessionNo from tblPanelSetOrder where ',
-      'PanelSetId = ', updateBuilder.panelSetId, ' and OrderedOnId = \'', resultData.AliquotOrderId, '\');'].join('')
+    var inputParametersStatement = updateBuilder.getInputParametersStatement(resultData)
     var inputParameters = {}
     cmdSubmitter.submit(inputParametersStatement, function(err, results) {
       if(err) return callback(err)
@@ -45,14 +40,15 @@ var self = module.exports = {
       inputParameters.accepted = results[0].accepted
       inputParameters.holdForWHP = results[0].holdForWHP
       inputParameters.distributeWHPOnly = results[0].distributeWHPOnly
-      if(results[1].reportNo == null) { inputParameters.hasWHP = 0
-      }else{
-        inputParameters.hasWHP = 1
+      var holdValue = 0
+      console.log(results.length)
+      if(results.length == 2) {
+        if(results[1].reportNo != '' && results[1].final == false &&
+           (results[0].holdForWHP == true || results[0].distributeWHPOnly == true)) {
+             holdValue = 1
+        }
       }
-      if(results[1].final == null) { inputParameters.whpIsFinal = 0
-      }else{
-        inputParameters.whpIsFinal = results[1].final
-      }
+      inputParameters.holdDistribution = holdValue
 
       callback(null, resultData, updateBuilder, inputParameters)
     })

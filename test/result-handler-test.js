@@ -10,8 +10,10 @@ const resultHelper = require('../src/core/result-helper')
 describe('Result Handler Tests', function () {
   it('GetUpdateBuilder Test', function(done) {
     resultHandler.getUpdateBuilder(pantherResultHPV.negative, function(err, resultData, builder) {
-      if(err) return callback(err)
-      assert.equal(builder.testName, 'HPV')
+      if(err) { assert.equal(err, '')
+      } else {
+        assert.equal(builder.testName, 'HPV')
+      }
       done()
     })
   })
@@ -21,7 +23,7 @@ describe('Result Handler Tests', function () {
       "PatientId":"999999",
       "LastName":" MOUSE",
       "FirstName":"MICKEY",
-      "AliquotOrderId":"18-8321.1.2",
+      "AliquotOrderId":"18-5560.1.2", // "17-1541.1.2",
       "TestName":"HPV",
       "ICRLU":"277472",
       "ICInterpretation":"Valid",
@@ -32,14 +34,14 @@ describe('Result Handler Tests', function () {
       "IC Cutoff":""
     }
     resultHandler.getInputParameters(results, hpvUpdateBuilder, function(err, resultData, builder, inputParams) {
-      if(err) return callback(err)
-      console.log(inputParams)
-      assert.equal(inputParams.reportNo, '18-8321.M1')
-      assert.equal(inputParams.accepted, 1)
-      assert.equal(inputParams.holdForWHP, 0)
-      assert.equal(inputParams.distributeWHPOnly, 0)
-      assert.equal(inputParams.hasWHP, 1)
-      assert.equal(inputParams.whpIsFinal, 1)
+      if(err) { assert.equal(err, '')
+      } else {
+        assert.equal(inputParams.reportNo, '18-5560.M1')
+        assert.equal(inputParams.accepted, 1)
+        assert.equal(inputParams.holdForWHP, 0)
+        assert.equal(inputParams.distributeWHPOnly, 0)
+        assert.equal(inputParams.holdDistribution, 0)
+      }
       done()
     })
   })
@@ -65,8 +67,7 @@ describe('Result Handler Tests', function () {
       accepted: 0,
       holdForWHP: 1,
       distributeWHPOnly: 0,
-      hasWHP: 1,
-      whpIsFinal: 1
+      holdDistribution: 1
     }
     resultHandler.buildUpdateObject(results, hpvUpdateBuilder, inputParams, function(err, updateObject) {
       if(err) { assert.equal(err, '')
@@ -75,9 +76,9 @@ describe('Result Handler Tests', function () {
         var holdDist = resultHelper.getField(updateObject, 'tblPanelSetOrder', 'HoldDistribution')
 
         assert.equal(results.OverallInterpretation, result.value)
-        assert.equal(0, holdDist.value)
+        assert.equal(1, holdDist.value)
       }
-      inputParams.whpIsFinal = 0
+      inputParams.holdDistribution = 0
       resultHandler.buildUpdateObject(results, hpvUpdateBuilder, inputParams, function(err, updateObject) {
         if(err) { assert.equal(err, '')
         } else {
@@ -85,7 +86,7 @@ describe('Result Handler Tests', function () {
           var holdDist = resultHelper.getField(updateObject, 'tblPanelSetOrder', 'HoldDistribution')
 
           assert.equal(results.OverallInterpretation, result.value)
-          assert.equal(1, holdDist.value)
+          assert.equal(0, holdDist.value)
         }
         done()
       })

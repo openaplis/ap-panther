@@ -2,15 +2,26 @@ const assert = require('chai').assert
 const path = require('path')
 
 const resultHandler = require('../src/core/result-handler')
-
+const pantherResultHPV = require(path.join(__dirname, 'panther-result-hpv'))
+const hpvUpdateBuilder = require('../src/core/hpv-update-builder')
+const hpvResult = require('../src/core/hpv-result')
+const resultHelper = require('../src/core/result-helper')
 
 describe('Result Handler Tests', function () {
-  it('HPV Test', function (done) {
-    var hpvNegResults = {
+  it('GetUpdateBuilder Test', function(done) {
+    resultHandler.getUpdateBuilder(pantherResultHPV.negative, function(err, resultData, builder) {
+      if(err) return callback(err)
+      assert.equal(builder.testName, 'HPV')
+      done()
+    })
+  })
+
+  it('GetInputParameters Test', function(done) {
+    var results = {
       "PatientId":"999999",
       "LastName":" MOUSE",
       "FirstName":"MICKEY",
-      "AliquotOrderId":"18-7689.1.2",
+      "AliquotOrderId":"18-8321.1.2",
       "TestName":"HPV",
       "ICRLU":"277472",
       "ICInterpretation":"Valid",
@@ -20,80 +31,143 @@ describe('Result Handler Tests', function () {
       "Analyte Cutoff":"",
       "IC Cutoff":""
     }
-    resultHandler.handleResult(hpvNegResults, function(err, result) {
-      if(err) {
-        assert.equal(err, '')
-      } else {
-        assert.equal(result, 'all done')
-      }
+    resultHandler.getInputParameters(results, hpvUpdateBuilder, function(err, resultData, builder, inputParams) {
+      if(err) return callback(err)
+      console.log(inputParams)
+      assert.equal(inputParams.reportNo, '18-8321.M1')
+      assert.equal(inputParams.accepted, 1)
+      assert.equal(inputParams.holdForWHP, 0)
+      assert.equal(inputParams.distributeWHPOnly, 0)
+      assert.equal(inputParams.hasWHP, 1)
+      assert.equal(inputParams.whpIsFinal, 1)
       done()
     })
   })
 
-  it('GTHPV Test', function (done) {
-    var gthpvNegResults = {
-      "PatientId":"341160",
-      "LastName":"MOUSE",
+  it('BuildUpdateObject Test', function(done) {
+    var results = {
+      "PatientId":"999999",
+      "LastName":" MOUSE",
       "FirstName":"MICKEY",
-      "AliquotOrderId":"18-7689.1.2",
-      "TestName":"GT HPV",
-      "IC/HPV 16 RLU":"202559",
-      "HPV 16 S/CO":"0.31",
-      "HPV 16 Result":"Negative",
-      "HPV 18/45 RLU":"0",
-      "HPV 18/45 S/CO":"0.00",
-      "HPV 18/45 Result":"Negative",
+      "AliquotOrderId":"17-999999.1.1",
+      "TestName":"HPV",
+      "ICRLU":"277472",
       "ICInterpretation":"Valid",
-      "HPV 16 Cutoff":"",
-      "HPV 18/45 Cutoff":"",
+      "AnalyteRLU":"0",
+      "AnalyteSCO":"0.00",
+      "OverallInterpretation":"Negative",
+      "Analyte Cutoff":"",
       "IC Cutoff":""
     }
-    resultHandler.handleResult(gthpvNegResults, function(err, result) {
-      if(err) {
-        assert.equal(err, '')
+
+    var inputParams = {
+      reportNo: '17-999999.M1',
+      accepted: 0,
+      holdForWHP: 1,
+      distributeWHPOnly: 0,
+      hasWHP: 1,
+      whpIsFinal: 1
+    }
+    resultHandler.buildUpdateObject(results, hpvUpdateBuilder, inputParams, function(err, updateObject) {
+      if(err) { assert.equal(err, '')
       } else {
-        assert.equal(result, 'all done')
+        var result = resultHelper.getField(updateObject, 'tblHPVTestOrder', 'Result')
+        var holdDist = resultHelper.getField(updateObject, 'tblPanelSetOrder', 'HoldDistribution')
+
+        assert.equal(results.OverallInterpretation, result.value)
+        assert.equal(0, holdDist.value)
       }
-      done()
+      inputParams.whpIsFinal = 0
+      resultHandler.buildUpdateObject(results, hpvUpdateBuilder, inputParams, function(err, updateObject) {
+        if(err) { assert.equal(err, '')
+        } else {
+          var result = resultHelper.getField(updateObject, 'tblHPVTestOrder', 'Result')
+          var holdDist = resultHelper.getField(updateObject, 'tblPanelSetOrder', 'HoldDistribution')
+
+          assert.equal(results.OverallInterpretation, result.value)
+          assert.equal(1, holdDist.value)
+        }
+        done()
+      })
     })
   })
 
-  it('NGCT test', function(done) {
-    var ngctNegResults = {
-        "PatientId":"",
-        "LastName":"MOUSE",
-        "FirstName":"MICKEY",
-        "AliquotOrderId":"18-7689.1.2",
-        "TestName":"CT/GC",
-        "TotalRLU":"9",
-        "CTResult":"CT neg",
-        "GCResult":"GC neg"
-    }
-    resultHandler.handleResult(ngctNegResults, function(err, result) {
-      if(err) {
-        assert.equal(err, '')
-      } else {
-        assert.equal(result, 'all done')
+  it('UpdateDatabase Test', function(done) {
+    var updateObject = [
+      {
+        "type":"update",
+        "tableName":"tblHPVTestOrder",
+        "primaryKey":"ReportNo",
+        "primaryKeyValue":"17-999999.M1",
+        "fields":[
+          {
+            "name":"Result",
+            "value":"Negative"
+          }
+        ]
+      },
+      {
+        "type":"update",
+        "tableName":"tblPanelSetOrder",
+        "primaryKey":"ReportNo",
+        "primaryKeyValue":"17-999999.M1",
+        "fields":[
+          {
+            "name":"ResultCode",
+            "value":"HPVNGTV"
+          },
+          {
+            "name":"HoldDistribution",
+            "value":0
+          },
+          {
+            "name":"Accepted",
+            "value":1
+          },
+          {
+            "name":"AcceptedBy",
+            "value":"AUTOVER TESTING"
+          },
+          {
+            "name":"AcceptedById",
+            "value":5134
+          },
+          {
+            "name":"AcceptedDate",
+            "value":"2018-04-09"
+          },
+          {
+            "name":"AcceptedTime",
+            "value":"2018-04-09 11:00"
+          },
+          {
+            "name":"Final",
+            "value":1
+          },
+          {
+            "name":"Signature",
+            "value":"AUTOVER TESTING"
+          },
+          {
+            "name":"FinaledById",
+            "value":5134
+          },
+          {
+            "name":"FinalDate",
+            "value":"2018-04-09"
+          },
+          {
+            "name":"FinalTime",
+            "value":"2018-04-09 11:00"
+          }
+        ]
       }
-      done()
-    })
-  })
+    ]
 
-  it("Trich Test", function(done) {
-    var trichNegResults = {
-      "PatientId":"",
-      "LastName":"MOUSE",
-      "FirstName":"MICKEY",
-      "AliquotOrderId":"18-7689.1.2",
-      "TestName":"TRICH",
-      "Total RLU":"2",
-      "TRICH Result":"TRICH neg"
-    }
-    resultHandler.handleResult(trichNegResults, function(err, result) {
-      if(err) {
-        assert.equal(err, '')
+    resultHandler.updateDatabase(updateObject, function(err, sql) {
+      if(err) { assert.equal(err, '')
       } else {
-        assert.equal(result, 'all done')
+        assert.equal('update tblHPVTestOrder set Result = \'Negative\' where ReportNo = \'17-999999.M1\'; update tblPanelSetOrder set ResultCode = \'HPVNGTV\',HoldDistribution = \'0\',Accepted = \'1\',AcceptedBy = \'AUTOVER TESTING\',AcceptedById = \'5134\',AcceptedDate = \'2018-04-09\',AcceptedTime = \'2018-04-09 11:00\',Final = \'1\',Signature = \'AUTOVER TESTING\',FinaledById = \'5134\',FinalDate = \'2018-04-09\',FinalTime = \'2018-04-09 11:00\' where ReportNo = \'17-999999.M1\';', sql)
       }
       done()
     })

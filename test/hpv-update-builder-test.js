@@ -3,37 +3,53 @@ const path = require('path')
 
 const resultHelper = require('../src/core/result-helper')
 const pantherResultHPV = require(path.join(__dirname, 'panther-result-hpv'))
-const hpvResultHandler = require('../src/core/hpv-result-handler')
+const hpvUpdateBuilder = require('../src/core/hpv-update-builder')
 const hpvResult = require('../src/core/hpv-result')
 
-describe('HPV Tests', function () {
-  it('GetInputParameters Test', function(done) {
-    hpvResultHandler.getInputParameters(pantherResultHPV.negative, function(err, inputParameters) {
-      if(err) assert.equal(err, '')
-      assert.equal(inputParameters.reportNo, '18-7689.M1')
-      assert.equal(inputParameters.accepted, 0)
-      done()
-    })
-  })
+var inputParams = {
+  "reportNo": "17-999999.M1",
+  "accepted": 0,
+  "holdForWHP": 1,
+  "distributeWHPOnly": 0,
+  "hasWHP": 1,
+  "whpIsFinal": 0
+}
 
+describe('HPV Tests', function () {
   it('Negative Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.negative, function(err, updates) {
+    hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.negative, inputParams, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblHPVTestOrder', 'Result')
         var resultCode = resultHelper.getField(updates, 'tblPanelSetOrder', 'ResultCode')
+        var holdDist = resultHelper.getField(updates, 'tblPanelSetOrder', 'HoldDistribution')
 
         assert.equal(hpvResult.negative.result, result.value)
         assert.equal(hpvResult.negative.resultCode, resultCode.value)
+        assert.equal(1, holdDist.value)
+      }
+      done()
+    })
+  })
+
+  it('Already Accepted Test', function (done) {
+    var inputParamsAccepted = {
+      "reportNo": "17-999999",
+      "accepted": true
+    }
+
+    hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.negative, inputParamsAccepted, function(err, updates) {
+      if(err) { assert.equal(err, '')
+      } else {
+        assert.equal(updates.length, 0)
       }
       done()
     })
   })
 
   it('Positive Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.positive, function(err, updates) {
+    hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.positive, inputParams, function(err, updates) {
       if(err) {
-        console.log('Error - ' + err)
         assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblHPVTestOrder', 'Result')
@@ -47,7 +63,7 @@ describe('HPV Tests', function () {
   })
 
   it('Invalid Test', function (done) {
-    hpvResultHandler.buildUpdateObject(pantherResultHPV.invalid, function(err, updates) {
+    hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.invalid, inputParams, function(err, updates) {
       if(err) {
         console.log('Error - ' + err)
         assert.equal(err, '')

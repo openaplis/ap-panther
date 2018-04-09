@@ -6,12 +6,6 @@ var cmdSubmitter = require('ap-mysql').cmdSubmitter
 var self = module.exports = {
   testName: 'GT HPV',
   panelSetId: 62,
-  getInputParametersStatement: function (pantherResult) {
-    var stmt = ['select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = 62 and OrderedOnId = \'',
-      pantherResult.AliquotOrderId, '\';'].join('')
-      return stmt
-  },
-
   buildUpdateObject: function (pantherResult, inputParameters, callback) {
     var result = []
 
@@ -29,6 +23,14 @@ var self = module.exports = {
         resultHelper.addField(hpv1618ResultUpdate, 'HPV18ResultCode', gthpvResult.hpv18.negative.resultCode)
 
         var psoResultUpdate = resultHelper.getBaseResultUpdate('tblPanelSetOrder', 'ReportNo', inputParameters.reportNo)
+
+        var holdValue = 0
+        if(inputParameters.hasWHP == true && inputParameters.whpIsFinal == false &&
+           (inputParameters.holdForWHP == true || inputParameters.distributeWHPOnly == true)) {
+             holdValue = 1
+        }
+        resultHelper.addField(psoResultUpdate, 'HoldDistribution', holdValue)
+
         resultHelper.autoAccept(psoResultUpdate)
         resultHelper.autoFinal(psoResultUpdate)
         result.push(hpv1618ResultUpdate)

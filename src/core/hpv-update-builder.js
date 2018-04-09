@@ -4,13 +4,7 @@ var hpvResult = require('./hpv-result')
 
 var self = module.exports = {
   testName: 'HPV',
-  //panelSetId: 14,
-  getInputParametersStatement: function (pantherResult) {
-    var stmt = ['select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = 14 and OrderedOnId = \'',
-      pantherResult.AliquotOrderId, '\';'].join('')
-      return stmt
-  },
-
+  panelSetId: 14,
   buildUpdateObject: function (pantherResult, inputParameters, callback) {
     var result = []
 
@@ -21,6 +15,13 @@ var self = module.exports = {
       if(pantherResult.OverallInterpretation == hpvResult.negative.result) {
         resultHelper.addField(hpvResultUpdate, 'Result', hpvResult.negative.result)
         resultHelper.addField(psoResultUpdate, 'ResultCode', hpvResult.negative.resultCode)
+
+        var holdValue = 0
+        if(inputParameters.hasWHP == true && inputParameters.whpIsFinal == false &&
+           (inputParameters.holdForWHP == true || inputParameters.distributeWHPOnly == true)) {
+             holdValue = 1
+        }
+        resultHelper.addField(psoResultUpdate, 'HoldDistribution', holdValue)
 
         resultHelper.autoAccept(psoResultUpdate)
         resultHelper.autoFinal(psoResultUpdate)

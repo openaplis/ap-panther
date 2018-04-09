@@ -8,25 +8,25 @@ const trichResult = require('../src/core/trich-result')
 
 var inputParams = {
   "reportNo": "17-999999",
-  "accepted": false
+  "accepted": 0,
+  "holdForWHP": 1,
+  "distributeWHPOnly": 0,
+  "hasWHP": 1,
+  "whpIsFinal": 0
 }
 
 describe('TRICH Tests', function () {
-  it('GetInputParametersStatement Test', function(done) {
-    var stmt = trichUpdateBuilder.getInputParametersStatement(pantherResultTrich.negative)
-      assert.equal(stmt, 'select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = 61 and OrderedOnId = \'17-999999.1.1\';')
-      done()
-  })
-
   it('Negative Test', function (done) {
     trichUpdateBuilder.buildUpdateObject(pantherResultTrich.negative, inputParams, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblTrichomonasTestOrder', 'Result')
         var resultCode = resultHelper.getField(updates, 'tblPanelSetOrder', 'ResultCode')
+        var holdDist = resultHelper.getField(updates, 'tblPanelSetOrder', 'HoldDistribution')
 
         assert.equal(trichResult.negative.result, result.value)
         assert.equal(trichResult.negative.resultCode, resultCode.value)
+        assert.equal(1, holdDist.value)
       }
       done()
     })

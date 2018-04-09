@@ -7,26 +7,26 @@ const hpvUpdateBuilder = require('../src/core/hpv-update-builder')
 const hpvResult = require('../src/core/hpv-result')
 
 var inputParams = {
-  "reportNo": "17-999999",
-  "accepted": false
+  "reportNo": "17-999999.M1",
+  "accepted": 0,
+  "holdForWHP": 1,
+  "distributeWHPOnly": 0,
+  "hasWHP": 1,
+  "whpIsFinal": 0
 }
 
 describe('HPV Tests', function () {
-  it('GetInputParametersStatement Test', function(done) {
-    var stmt = hpvUpdateBuilder.getInputParametersStatement(pantherResultHPV.negative)
-      assert.equal(stmt, 'select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = 14 and OrderedOnId = \'17-999999.1.1\';')
-      done()
-  })
-
   it('Negative Test', function (done) {
     hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.negative, inputParams, function(err, updates) {
       if(err) { assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblHPVTestOrder', 'Result')
         var resultCode = resultHelper.getField(updates, 'tblPanelSetOrder', 'ResultCode')
+        var holdDist = resultHelper.getField(updates, 'tblPanelSetOrder', 'HoldDistribution')
 
         assert.equal(hpvResult.negative.result, result.value)
         assert.equal(hpvResult.negative.resultCode, resultCode.value)
+        assert.equal(1, holdDist.value)
       }
       done()
     })
@@ -50,7 +50,6 @@ describe('HPV Tests', function () {
   it('Positive Test', function (done) {
     hpvUpdateBuilder.buildUpdateObject(pantherResultHPV.positive, inputParams, function(err, updates) {
       if(err) {
-        console.log('Error - ' + err)
         assert.equal(err, '')
       } else {
         var result = resultHelper.getField(updates, 'tblHPVTestOrder', 'Result')

@@ -8,15 +8,14 @@ const ngctResult = require('../src/core/ngct-result')
 
 var inputParams = {
   "reportNo": "17-999999",
-  "accepted": false
+  "accepted": 0,
+  "holdForWHP": 1,
+  "distributeWHPOnly": 0,
+  "hasWHP": 1,
+  "whpIsFinal": 0
 }
 
 describe('NGCT Tests', function () {
-  it('GetInputParametersStatement Test', function(done) {
-    var stmt = ngctUpdateBuilder.getInputParametersStatement(pantherResultNGCT.bothNegative)
-      assert.equal(stmt, 'select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = 3 and OrderedOnId = \'17-999999.1.1\';')
-      done()
-  })
   it('Both Negative Test', function (done) {
     ngctUpdateBuilder.buildUpdateObject(pantherResultNGCT.bothNegative, inputParams, function(err, updates) {
       if(err) { assert.equal(err, '')
@@ -25,11 +24,13 @@ describe('NGCT Tests', function () {
         var ngresultCode = resultHelper.getField(updates, 'tblNGCTTestOrder', 'NGResultCode')
         var ctresult = resultHelper.getField(updates, 'tblNGCTTestOrder', 'ChlamydiaTrachomatisResult')
         var ctresultCode = resultHelper.getField(updates, 'tblNGCTTestOrder', 'CTResultCode')
+        var holdDist = resultHelper.getField(updates, 'tblPanelSetOrder', 'HoldDistribution')
 
         assert.equal(ngctResult.ng.negative.result, ngresult.value)
         assert.equal(ngctResult.ng.negative.resultCode, ngresultCode.value)
         assert.equal(ngctResult.ct.negative.result, ctresult.value)
         assert.equal(ngctResult.ct.negative.resultCode, ctresultCode.value)
+        assert.equal(1, holdDist.value)
       }
       done()
     })

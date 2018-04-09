@@ -8,16 +8,14 @@ const gthpvResult = require('../src/core/gthpv-result')
 
 var inputParams = {
   "reportNo": "17-999999",
-  "accepted": false
+  "accepted": 0,
+  holdForWHP: 1,
+  distributeWHPOnly: 0,
+  hasWHP: 1,
+  whpIsFinal: 0
 }
 
 describe('GT HPV Tests', function () {
-  it('GetInputParametersStatement Test', function(done) {
-    var stmt = gthpvUpdateBuilder.getInputParametersStatement(pantherResultGTHPV.resultOne)
-      assert.equal(stmt, 'select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = 62 and OrderedOnId = \'17-999999.1.1\';')
-      done()
-  })
-
   it('Both Negative Test', function (done) {
     gthpvUpdateBuilder.buildUpdateObject(pantherResultGTHPV.resultOne, inputParams, function(err, updates) {
       if(err) assert.equal(err, '')
@@ -25,11 +23,13 @@ describe('GT HPV Tests', function () {
       var hpv16resultCode = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV16ResultCode')
       var hpv18result = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV18Result')
       var hpv18resultCode = resultHelper.getField(updates, 'tblPanelSetOrderHPV1618', 'HPV18ResultCode')
+      var holdDist = resultHelper.getField(updates, 'tblPanelSetOrder', 'HoldDistribution')
 
       assert.equal(gthpvResult.hpv16.negative.result, hpv16result.value)
       assert.equal(gthpvResult.hpv16.negative.resultCode, hpv16resultCode.value)
       assert.equal(gthpvResult.hpv18.negative.result, hpv18result.value)
       assert.equal(gthpvResult.hpv18.negative.resultCode, hpv18resultCode.value)
+      assert.equal(1, holdDist.value)
     })
     done()
   })

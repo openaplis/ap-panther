@@ -4,12 +4,7 @@ var ngctResult = require('./ngct-result')
 
 var self = module.exports = {
   testName: 'CT/GC',
-  getInputParametersStatement: function (pantherResult, callback) {
-    var stmt = ['select ReportNo, Accepted from tblPanelSetOrder where PanelSetId = 3 and OrderedOnId = \'',
-      pantherResult.AliquotOrderId, '\';'].join('')
-      return stmt
-  },
-
+  panelSetId: 3,
   buildUpdateObject: function (pantherResult, inputParameters, callback) {
     var result = []
 
@@ -27,6 +22,14 @@ var self = module.exports = {
         resultHelper.addField(ngctResultUpdate, 'CTResultCode', ngctResult.ct.negative.resultCode)
 
         var psoResultUpdate = resultHelper.getBaseResultUpdate('tblPanelSetOrder', 'ReportNo', inputParameters.reportNo)
+
+        var holdValue = 0
+        if(inputParameters.hasWHP == true && inputParameters.whpIsFinal == false &&
+           (inputParameters.holdForWHP == true || inputParameters.distributeWHPOnly == true)) {
+             holdValue = 1
+        }
+        resultHelper.addField(psoResultUpdate, 'HoldDistribution', holdValue)
+
         resultHelper.autoAccept(psoResultUpdate)
         resultHelper.autoFinal(psoResultUpdate)
         result.push(ngctResultUpdate)

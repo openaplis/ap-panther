@@ -11,8 +11,7 @@ var inputParams = {
   "accepted": 0,
   "holdForWHP": 1,
   "distributeWHPOnly": 0,
-  "hasWHP": 1,
-  "whpIsFinal": 0
+  "holdDistribution": 0
 }
 
 describe('HPV Tests', function () {
@@ -26,7 +25,7 @@ describe('HPV Tests', function () {
 
         assert.equal(hpvResult.negative.result, result.value)
         assert.equal(hpvResult.negative.resultCode, resultCode.value)
-        assert.equal(1, holdDist.value)
+        assert.equal(0, holdDist.value)
       }
       done()
     })

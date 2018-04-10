@@ -6,6 +6,15 @@ var cmdSubmitter = require('ap-mysql').cmdSubmitter
 var self = module.exports = {
   testName: 'GT HPV',
   panelSetId: 62,
+  getInputParametersStatement: function(pantherResult) {
+    var sql = ['select pso.ReportNo, pso.Accepted, p.HoldForWHP, p.DistributeWHPOnly from tblPanelSetOrder ',
+     'pso join tblAccessionOrder ao on pso.MasterAccessionNo = ao.MasterAccessionNo join tblPhysician p on ',
+     'ao.PhysicianId = p.PhysicianId where PanelSetId = 62 and OrderedOnId = \'',
+      pantherResult.AliquotOrderId, '\'; select ReportNo, Final from tblPanelSetOrder where ',
+     'PanelSetId = 116 and MasterAccessionNo = (select MasterAccessionNo from tblPanelSetOrder where ',
+     'PanelSetId = 62 and OrderedOnId = \'', pantherResult.AliquotOrderId, '\');'].join('')
+     return sql
+  },
   buildUpdateObject: function (pantherResult, inputParameters, callback) {
     var result = []
 
@@ -23,13 +32,7 @@ var self = module.exports = {
         resultHelper.addField(hpv1618ResultUpdate, 'HPV18ResultCode', gthpvResult.hpv18.negative.resultCode)
 
         var psoResultUpdate = resultHelper.getBaseResultUpdate('tblPanelSetOrder', 'ReportNo', inputParameters.reportNo)
-
-        var holdValue = 0
-        if(inputParameters.hasWHP == true && inputParameters.whpIsFinal == false &&
-           (inputParameters.holdForWHP == true || inputParameters.distributeWHPOnly == true)) {
-             holdValue = 1
-        }
-        resultHelper.addField(psoResultUpdate, 'HoldDistribution', holdValue)
+        resultHelper.addField(psoResultUpdate, 'HoldDistribution', inputParameters.holdDistribution)
 
         resultHelper.autoAccept(psoResultUpdate)
         resultHelper.autoFinal(psoResultUpdate)

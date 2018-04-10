@@ -9,10 +9,9 @@ const gthpvResult = require('../src/core/gthpv-result')
 var inputParams = {
   "reportNo": "17-999999",
   "accepted": 0,
-  holdForWHP: 1,
-  distributeWHPOnly: 0,
-  hasWHP: 1,
-  whpIsFinal: 0
+  "holdForWHP": 1,
+  "distributeWHPOnly": 0,
+  "holdDistribution": 0
 }
 
 describe('GT HPV Tests', function () {
@@ -29,7 +28,7 @@ describe('GT HPV Tests', function () {
       assert.equal(gthpvResult.hpv16.negative.resultCode, hpv16resultCode.value)
       assert.equal(gthpvResult.hpv18.negative.result, hpv18result.value)
       assert.equal(gthpvResult.hpv18.negative.resultCode, hpv18resultCode.value)
-      assert.equal(1, holdDist.value)
+      assert.equal(0, holdDist.value)
     })
     done()
   })

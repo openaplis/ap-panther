@@ -11,8 +11,7 @@ var inputParams = {
   "accepted": 0,
   "holdForWHP": 1,
   "distributeWHPOnly": 0,
-  "hasWHP": 1,
-  "whpIsFinal": 0
+  "holdDistribution": 1
 }
 
 describe('TRICH Tests', function () {

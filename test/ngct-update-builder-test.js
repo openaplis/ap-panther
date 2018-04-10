@@ -11,8 +11,7 @@ var inputParams = {
   "accepted": 0,
   "holdForWHP": 1,
   "distributeWHPOnly": 0,
-  "hasWHP": 1,
-  "whpIsFinal": 0
+  "holdDistribution": 0
 }
 
 describe('NGCT Tests', function () {
@@ -30,7 +29,7 @@ describe('NGCT Tests', function () {
         assert.equal(ngctResult.ng.negative.resultCode, ngresultCode.value)
         assert.equal(ngctResult.ct.negative.result, ctresult.value)
         assert.equal(ngctResult.ct.negative.resultCode, ctresultCode.value)
-        assert.equal(1, holdDist.value)
+        assert.equal(0, holdDist.value)
       }
       done()
     })
